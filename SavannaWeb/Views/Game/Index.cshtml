@@ -5,8 +5,8 @@
 
 <h2>Welcome to the Game!</h2>
 
-<form method="post" asp-action="SaveGame">
-    <textarea name="saveData" rows="5" cols="50" placeholder="Enter game data here (JSON or text)"></textarea><br />
+<form method="post" asp-action="SaveGame" id="saveGameForm">
+    <textarea name="saveData" id="saveData" rows="5" cols="50" placeholder="Enter game data here (JSON or text)"></textarea><br />
     <button type="submit">💾 Save Game</button>
 </form>
 
@@ -34,4 +34,32 @@ else
 {
     <h3>Loaded Game Data</h3>
     <pre>@ViewBag.LoadedGame</pre>
+}
+
+@section Scripts {
+    <script>
+        let isSaved = true;
+
+        const textarea = document.getElementById('saveData');
+        const form = document.getElementById('saveGameForm');
+
+        // Kad lietotājs maina tekstu - progress nav saglabāts
+        textarea.addEventListener('input', () => {
+            isSaved = false;
+        });
+
+        // Kad forma tiek iesniegta (spēle tiek saglabāta)
+        form.addEventListener('submit', () => {
+            isSaved = true;
+        });
+
+        // Brīdinājums pirms lapas aizvēršanas, ja progress nav saglabāts
+        window.addEventListener('beforeunload', function (e) {
+            if (!isSaved) {
+                const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
+                e.returnValue = confirmationMessage; // Standarts
+                return confirmationMessage;          // Atbalsts dažiem pārlūkiem
+            }
+        });
+    </script>
 }
