@@ -1,6 +1,37 @@
 ﻿@{
     ViewData["Title"] = "Game Page";
+    var saves = ViewBag.Saves as List<SavannaWeb.Models.GameSave>;
 }
 
-<h1>Game Page</h1>
-<p>Šī lapa pieejama tikai autorizētiem lietotājiem.</p>
+<h2>Welcome to the Game!</h2>
+
+<form method="post" asp-action="SaveGame">
+    <textarea name="saveData" rows="5" cols="50" placeholder="Enter game data here (JSON or text)"></textarea><br />
+    <button type="submit">💾 Save Game</button>
+</form>
+
+@if (saves != null && saves.Any())
+{
+    <h3>Your Saved Games</h3>
+    <ul>
+        @foreach (var save in saves)
+        {
+            <li>
+                <strong>@save.SavedAt.ToString("g")</strong>
+                <form method="get" asp-action="LoadGame" asp-route-id="@save.Id" style="display:inline">
+                    <button type="submit">▶ Load</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No saved games yet.</p>
+}
+
+@if (ViewBag.LoadedGame != null)
+{
+    <h3>Loaded Game Data</h3>
+    <pre>@ViewBag.LoadedGame</pre>
+}
