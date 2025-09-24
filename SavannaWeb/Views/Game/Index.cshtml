@@ -44,17 +44,14 @@ else
         const textarea = document.getElementById('saveData');
         const form = document.getElementById('saveGameForm');
 
-        // Mark progress as unsaved when user types in the textarea
         textarea.addEventListener('input', () => {
             isSaved = false;
         });
 
-        // Mark progress as saved when the form is submitted
         form.addEventListener('submit', () => {
             isSaved = true;
         });
 
-        // Show warning when trying to close or reload the page with unsaved progress
         window.addEventListener('beforeunload', function (e) {
             if (!isSaved) {
                 const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
@@ -63,7 +60,20 @@ else
             }
         });
 
-        // Display iteration and living animals count for each saved game
+        // Animal code/name to icon mapping
+        const animalIcons = {
+            "Lion": "🦁",
+            "Zebra": "🦓",
+            "Elephant": "🐘",
+            "Giraffe": "🦒",
+            "A": "🦁",      // Example: "A" for Lion
+            "Z": "🦓",      // Example: "Z" for Zebra
+            "E": "🐘",      // Example: "E" for Elephant
+            "G": "🦒"       // Example: "G" for Giraffe
+            // Add more as needed
+        };
+
+        // Display iteration, living animals count, and animal icons for each saved game
         document.querySelectorAll('#saveList li').forEach(li => {
             const rawData = li.dataset.save;
 
@@ -72,8 +82,17 @@ else
                 const iteration = decoded.iteration ?? 'N/A';
                 const animals = decoded.livingAnimals ?? 'N/A';
 
-                const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}`;
-                li.querySelector('.gameInfo').textContent = info;
+                // Try to get animal list/array from save data
+                let animalList = decoded.animals ?? decoded.animalList ?? [];
+                if (!Array.isArray(animalList)) animalList = [];
+
+                // Map animal codes/names to icons
+                const animalIconsStr = animalList.map(a => animalIcons[a] || a).join(' ');
+
+                const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}` +
+                    (animalIconsStr ? `<br>Animals: ${animalIconsStr}` : '');
+
+                li.querySelector('.gameInfo').innerHTML = info;
             } catch (e) {
                 li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
             }
