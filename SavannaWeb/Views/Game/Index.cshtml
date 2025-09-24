@@ -16,7 +16,7 @@
     <ul id="saveList">
         @foreach (var save in saves)
         {
-            <li data-save='@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(save.SaveData))'>
+            <li data-save="@save.SaveData">
                 <strong>@save.SavedAt.ToString("g")</strong><br />
                 <span class="gameInfo">Loading game data...</span><br />
                 <form method="get" asp-action="LoadGame" asp-route-id="@save.Id" style="display:inline">
@@ -58,8 +58,8 @@ else
         window.addEventListener('beforeunload', function (e) {
             if (!isSaved) {
                 const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
-                e.returnValue = confirmationMessage; // Standard for modern browsers
-                return confirmationMessage;          // For older browser support
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
             }
         });
 
