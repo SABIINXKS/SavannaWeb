@@ -20,7 +20,7 @@ namespace SavannaWeb.Controllers
             _context = context;
         }
 
-        // Spēles galvenā lapa ar sarakstu
+        // Main game page that displays the list of saved games
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -33,7 +33,7 @@ namespace SavannaWeb.Controllers
             return View();
         }
 
-        // Saglabā spēli (POST)
+        // Saves a game (POST request)
         [HttpPost]
         public async Task<IActionResult> SaveGame(string saveData)
         {
@@ -51,7 +51,7 @@ namespace SavannaWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        // Ielādē spēli (GET)
+        // Loads a game by ID (GET request)
         public async Task<IActionResult> LoadGame(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -61,6 +61,7 @@ namespace SavannaWeb.Controllers
                 return NotFound();
 
             ViewBag.LoadedGame = save.SaveData;
+
             var saves = _context.GameSaves
                 .Where(g => g.UserId == user.Id)
                 .OrderByDescending(g => g.SavedAt)
