@@ -37,21 +37,42 @@ else
     <pre>@ViewBag.LoadedGame</pre>
 }
 
+<button id="toggleAnimalDisplay" class="btn btn-secondary mb-2" type="button">
+    Show Animal Names
+</button>
+
 @section Scripts {
     <script>
         let isSaved = true;
+        let showIcons = true; // Default: show icons
 
         const textarea = document.getElementById('saveData');
         const form = document.getElementById('saveGameForm');
+        const toggleBtn = document.getElementById('toggleAnimalDisplay');
 
+        // Animal code/name to icon mapping
+        const animalIcons = {
+            "Lion": "🦁",
+            "Zebra": "🦓",
+            "Elephant": "🐘",
+            "Giraffe": "🦒",
+            "A": "🦁",
+            "Z": "🦓",
+            "E": "🐘",
+            "G": "🦒"
+        };
+
+        // Mark progress as unsaved when user types in the textarea
         textarea.addEventListener('input', () => {
             isSaved = false;
         });
 
+        // Mark progress as saved when the form is submitted
         form.addEventListener('submit', () => {
             isSaved = true;
         });
 
+        // Show warning when trying to close or reload the page with unsaved progress
         window.addEventListener('beforeunload', function (e) {
             if (!isSaved) {
                 const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
@@ -60,42 +81,44 @@ else
             }
         });
 
-        // Animal code/name to icon mapping
-        const animalIcons = {
-            "Lion": "🦁",
-            "Zebra": "🦓",
-            "Elephant": "🐘",
-            "Giraffe": "🦒",
-            "A": "🦁",      // Example: "A" for Lion
-            "Z": "🦓",      // Example: "Z" for Zebra
-            "E": "🐘",      // Example: "E" for Elephant
-            "G": "🦒"       // Example: "G" for Giraffe
-            // Add more as needed
-        };
+        // Function to render animal info (icons or names)
+        function renderAnimalInfo() {
+            document.querySelectorAll('#saveList li').forEach(li => {
+                const rawData = li.dataset.save;
 
-        // Display iteration, living animals count, and animal icons for each saved game
-        document.querySelectorAll('#saveList li').forEach(li => {
-            const rawData = li.dataset.save;
+                try {
+                    const decoded = JSON.parse(rawData);
+                    const iteration = decoded.iteration ?? 'N/A';
+                    const animals = decoded.livingAnimals ?? 'N/A';
 
-            try {
-                const decoded = JSON.parse(rawData);
-                const iteration = decoded.iteration ?? 'N/A';
-                const animals = decoded.livingAnimals ?? 'N/A';
+                    let animalList = decoded.animals ?? decoded.animalList ?? [];
+                    if (!Array.isArray(animalList)) animalList = [];
 
-                // Try to get animal list/array from save data
-                let animalList = decoded.animals ?? decoded.animalList ?? [];
-                if (!Array.isArray(animalList)) animalList = [];
+                    let animalDisplay;
+                    if (showIcons) {
+                        animalDisplay = animalList.map(a => animalIcons[a] || a).join(' ');
+                    } else {
+                        animalDisplay = animalList.join(', ');
+                    }
 
-                // Map animal codes/names to icons
-                const animalIconsStr = animalList.map(a => animalIcons[a] || a).join(' ');
+                    const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}` +
+                        (animalList.length ? `<br>Animals: ${animalDisplay}` : '');
 
-                const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}` +
-                    (animalIconsStr ? `<br>Animals: ${animalIconsStr}` : '');
+                    li.querySelector('.gameInfo').innerHTML = info;
+                } catch (e) {
+                    li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
+                }
+            });
+        }
 
-                li.querySelector('.gameInfo').innerHTML = info;
-            } catch (e) {
-                li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
-            }
+        // Initial render
+        renderAnimalInfo();
+
+        // Toggle button event
+        toggleBtn.addEventListener('click', () => {
+            showIcons = !showIcons;
+            toggleBtn.textContent = showIcons ? 'Show Animal Names' : 'Show Animal Icons';
+            renderAnimalInfo();
         });
     </script>
 }
