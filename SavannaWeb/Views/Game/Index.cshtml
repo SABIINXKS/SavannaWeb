@@ -13,11 +13,12 @@
 @if (saves != null && saves.Any())
 {
     <h3>Your Saved Games</h3>
-    <ul>
+    <ul id="saveList">
         @foreach (var save in saves)
         {
-            <li>
-                <strong>@save.SavedAt.ToString("g")</strong>
+            <li data-save='@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(save.SaveData))'>
+                <strong>@save.SavedAt.ToString("g")</strong><br />
+                <span class="gameInfo">Loading game data...</span><br />
                 <form method="get" asp-action="LoadGame" asp-route-id="@save.Id" style="display:inline">
                     <button type="submit">▶ Load</button>
                 </form>
@@ -43,22 +44,38 @@ else
         const textarea = document.getElementById('saveData');
         const form = document.getElementById('saveGameForm');
 
-        // Kad lietotājs maina tekstu - progress nav saglabāts
+        // Mark progress as unsaved when user types in the textarea
         textarea.addEventListener('input', () => {
             isSaved = false;
         });
 
-        // Kad forma tiek iesniegta (spēle tiek saglabāta)
+        // Mark progress as saved when the form is submitted
         form.addEventListener('submit', () => {
             isSaved = true;
         });
 
-        // Brīdinājums pirms lapas aizvēršanas, ja progress nav saglabāts
+        // Show warning when trying to close or reload the page with unsaved progress
         window.addEventListener('beforeunload', function (e) {
             if (!isSaved) {
                 const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
-                e.returnValue = confirmationMessage; // Standarts
-                return confirmationMessage;          // Atbalsts dažiem pārlūkiem
+                e.returnValue = confirmationMessage; // Standard for modern browsers
+                return confirmationMessage;          // For older browser support
+            }
+        });
+
+        // Display iteration and living animals count for each saved game
+        document.querySelectorAll('#saveList li').forEach(li => {
+            const rawData = li.dataset.save;
+
+            try {
+                const decoded = JSON.parse(rawData);
+                const iteration = decoded.iteration ?? 'N/A';
+                const animals = decoded.livingAnimals ?? 'N/A';
+
+                const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}`;
+                li.querySelector('.gameInfo').textContent = info;
+            } catch (e) {
+                li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
             }
         });
     </script>
