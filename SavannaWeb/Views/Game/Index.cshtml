@@ -44,13 +44,12 @@ else
 @section Scripts {
     <script>
         let isSaved = true;
-        let showIcons = true; // Default: show icons
+        let showIcons = true;
 
         const textarea = document.getElementById('saveData');
         const form = document.getElementById('saveGameForm');
         const toggleBtn = document.getElementById('toggleAnimalDisplay');
 
-        // Animal code/name to icon mapping
         const animalIcons = {
             "Lion": "🦁",
             "Zebra": "🦓",
@@ -62,17 +61,9 @@ else
             "G": "🦒"
         };
 
-        // Mark progress as unsaved when user types in the textarea
-        textarea.addEventListener('input', () => {
-            isSaved = false;
-        });
+        textarea.addEventListener('input', () => { isSaved = false; });
+        form.addEventListener('submit', () => { isSaved = true; });
 
-        // Mark progress as saved when the form is submitted
-        form.addEventListener('submit', () => {
-            isSaved = true;
-        });
-
-        // Show warning when trying to close or reload the page with unsaved progress
         window.addEventListener('beforeunload', function (e) {
             if (!isSaved) {
                 const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
@@ -81,11 +72,10 @@ else
             }
         });
 
-        // Function to render animal info (icons or names)
+        // Function to render animal info (icons or names) as clickable spans
         function renderAnimalInfo() {
             document.querySelectorAll('#saveList li').forEach(li => {
                 const rawData = li.dataset.save;
-
                 try {
                     const decoded = JSON.parse(rawData);
                     const iteration = decoded.iteration ?? 'N/A';
@@ -94,12 +84,13 @@ else
                     let animalList = decoded.animals ?? decoded.animalList ?? [];
                     if (!Array.isArray(animalList)) animalList = [];
 
-                    let animalDisplay;
-                    if (showIcons) {
-                        animalDisplay = animalList.map(a => animalIcons[a] || a).join(' ');
-                    } else {
-                        animalDisplay = animalList.join(', ');
-                    }
+                    let animalDisplay = animalList.map((a, idx) => {
+                        let type = a.type ?? a; // If a is object, use type; else use value
+                        let iconOrName = showIcons ? (animalIcons[type] || type) : (type);
+                        // Attach stats as data attribute (stringified for object, or just type for string)
+                        let stats = typeof a === 'object' ? JSON.stringify(a) : JSON.stringify({ type: a });
+                        return `<span class="animal" data-stats='${stats}' style="cursor:pointer;">${iconOrName}</span>`;
+                    }).join(' ');
 
                     const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}` +
                         (animalList.length ? `<br>Animals: ${animalDisplay}` : '');
@@ -109,12 +100,19 @@ else
                     li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
                 }
             });
+
+            // Add click event to all animal spans
+            document.querySelectorAll('.animal').forEach(span => {
+                span.addEventListener('click', function () {
+                    const stats = JSON.parse(this.dataset.stats);
+                    let statsText = Object.entries(stats).map(([k, v]) => `${k}: ${v}`).join('\n');
+                    alert("Animal statistics:\n" + statsText);
+                });
+            });
         }
 
-        // Initial render
         renderAnimalInfo();
 
-        // Toggle button event
         toggleBtn.addEventListener('click', () => {
             showIcons = !showIcons;
             toggleBtn.textContent = showIcons ? 'Show Animal Names' : 'Show Animal Icons';
