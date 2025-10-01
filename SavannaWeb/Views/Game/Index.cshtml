@@ -85,7 +85,7 @@ else
                     if (!Array.isArray(animalList)) animalList = [];
 
                     let animalDisplay = animalList.map((a, idx) => {
-                        let species = a.species ?? a; // Use species for new structure
+                        let species = typeof a === 'object' && a !== null ? (a.species ?? a.type ?? '') : a;
                         let iconOrName = showIcons ? (animalIcons[species] || species) : (species);
                         let stats = typeof a === 'object' ? JSON.stringify(a) : JSON.stringify({ species: a });
                         return `<span class="animal" data-stats='${stats}' style="cursor:pointer;">${iconOrName}</span>`;
