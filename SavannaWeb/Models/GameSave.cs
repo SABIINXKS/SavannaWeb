@@ -18,13 +18,25 @@ namespace SavannaWeb.Models
 
         public DateTime SavedAt { get; set; } = DateTime.Now;
 
-        public void SerializeSaveData(int iteration, int livingAnimals, (string type, int health, int age)[] animals)
+        /// <summary>
+        /// Serializes the game state to JSON, including animal species, age, health, and offspring count.
+        /// </summary>
+        /// <param name="iteration">Current game iteration.</param>
+        /// <param name="livingAnimals">Number of living animals.</param>
+        /// <param name="animals">Array of animal statistics (species, age, health, offspringCount).</param>
+        public void SerializeSaveData(int iteration, int livingAnimals, (string species, int age, int health, int offspringCount)[] animals)
         {
             var saveData = new
             {
                 iteration,
                 livingAnimals,
-                animals
+                animals = animals.Select(a => new
+                {
+                    species = a.species,
+                    age = a.age,
+                    health = a.health,
+                    offspringCount = a.offspringCount
+                }).ToArray()
             };
             SaveData = JsonSerializer.Serialize(saveData);
         }
