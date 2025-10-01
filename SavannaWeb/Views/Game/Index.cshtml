@@ -41,6 +41,15 @@ else
     Show Animal Names
 </button>
 
+<style>
+    .animal.selected {
+        background-color: #ffe082;
+        border-radius: 4px;
+        padding: 2px 6px;
+        transition: background 0.2s;
+    }
+</style>
+
 @section Scripts {
     <script>
         let isSaved = true;
@@ -103,6 +112,11 @@ else
             // Add click event to all animal spans
             document.querySelectorAll('.animal').forEach(span => {
                 span.addEventListener('click', function () {
+                    // Remove highlight from all animals
+                    document.querySelectorAll('.animal.selected').forEach(s => s.classList.remove('selected'));
+                    // Highlight the clicked animal
+                    this.classList.add('selected');
+
                     const stats = JSON.parse(this.dataset.stats);
                     let statsText = Object.entries(stats).map(([k, v]) => `${k}: ${v}`).join('\n');
                     alert("Animal statistics:\n" + statsText);
