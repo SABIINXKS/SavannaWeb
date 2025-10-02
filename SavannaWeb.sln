@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavannaWeb", "SavannaWeb\Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavannaWeb.DataAccess", "SavannaWeb.DataAccess\SavannaWeb.DataAccess.csproj", "{E38D2E8F-ED4B-4269-8349-E632C8C8EE6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavannaWeb.Models", "SavannaWeb.Models\SavannaWeb.Models.csproj", "{DFB52712-6C9E-496D-DE74-3A99DC4EF7CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E38D2E8F-ED4B-4269-8349-E632C8C8EE6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E38D2E8F-ED4B-4269-8349-E632C8C8EE6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E38D2E8F-ED4B-4269-8349-E632C8C8EE6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB52712-6C9E-496D-DE74-3A99DC4EF7CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB52712-6C9E-496D-DE74-3A99DC4EF7CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB52712-6C9E-496D-DE74-3A99DC4EF7CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB52712-6C9E-496D-DE74-3A99DC4EF7CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

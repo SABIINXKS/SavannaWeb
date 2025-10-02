@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SavannaWeb.Models\SavannaWeb.Models.csproj" />
-    <ProjectReference Include="..\SavannaWeb.DataAccess\SavannaWeb.DataAccess.csproj" />
+    <ProjectReference Include="..\\SavannaWeb.Models\\SavannaWeb.Models.csproj" />
+    <ProjectReference Include="..\\SavannaWeb.DataAccess\\SavannaWeb.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
