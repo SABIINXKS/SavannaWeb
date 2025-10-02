@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SavannaWeb.Models;
 using SavannaWeb.DataAccess;
-using SavannaWeb.Data;
 using System.Threading.Tasks;
-
 
 namespace SavannaWeb.Controllers
 {
