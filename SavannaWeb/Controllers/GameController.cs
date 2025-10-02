@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SavannaWeb.Models;
 using SavannaWeb.DataAccess;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SavannaWeb.Controllers
 {
@@ -61,6 +62,25 @@ namespace SavannaWeb.Controllers
             ViewBag.Saves = saves;
 
             return View("Index");
+        }
+
+        // Displays the game grid
+        public IActionResult Grid()
+        {
+            int gridWidth = 10;
+            int gridHeight = 10;
+            var animals = new List<Animal>
+            {
+                new Animal { Species = "Lion", X = 2, Y = 3 },
+                new Animal { Species = "Zebra", X = 5, Y = 7 }
+                // ...add more animals as needed
+            };
+
+            ViewBag.GridWidth = gridWidth;
+            ViewBag.GridHeight = gridHeight;
+            ViewBag.Animals = animals;
+
+            return View();
         }
     }
 }
