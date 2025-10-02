@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SavannaWeb.Models;
 
 namespace SavannaWeb.Data
 {
@@ -11,6 +10,6 @@ namespace SavannaWeb.Data
         {
         }
 
-        public DbSet<GameSave> GameSaves { get; set; }
+        public DbSet<SavannaWeb.Models.GameSave> GameSaves { get; set; }
     }
 }

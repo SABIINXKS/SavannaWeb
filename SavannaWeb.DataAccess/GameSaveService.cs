@@ -19,8 +19,8 @@ namespace SavannaWeb.DataAccess
         public async Task<List<GameSave>> GetUserSavesAsync(string userId)
         {
             return await _context.GameSaves
-                .Where(g => g.UserId == userId)
-                .OrderByDescending(g => g.SavedAt)
+                .Where(gs => gs.UserId == userId)
+                .OrderByDescending(gs => gs.SavedAt)
                 .ToListAsync();
         }
 
@@ -33,7 +33,7 @@ namespace SavannaWeb.DataAccess
         public async Task<GameSave?> GetUserSaveByIdAsync(int id, string userId)
         {
             return await _context.GameSaves
-                .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
+                .FirstOrDefaultAsync(gs => gs.Id == id && gs.UserId == userId);
         }
     }
 }

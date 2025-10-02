@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 
 namespace SavannaWeb.Models
@@ -21,9 +20,6 @@ namespace SavannaWeb.Models
         /// <summary>
         /// Serializes the game state to JSON, including animal species, age, health, and offspring count.
         /// </summary>
-        /// <param name="iteration">Current game iteration.</param>
-        /// <param name="livingAnimals">Number of living animals.</param>
-        /// <param name="animals">Array of animal statistics (species, age, health, offspringCount).</param>
         public void SerializeSaveData(int iteration, int livingAnimals, (string species, int age, int health, int offspringCount)[] animals)
         {
             var saveData = new
