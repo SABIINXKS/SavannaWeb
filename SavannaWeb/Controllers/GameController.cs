@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SavannaWeb.Data;
 using SavannaWeb.Models;
-using System.Linq;
+using SavannaWeb.DataAccess;
+using SavannaWeb.Data;
 using System.Threading.Tasks;
+
 
 namespace SavannaWeb.Controllers
 {
@@ -12,22 +13,19 @@ namespace SavannaWeb.Controllers
     public class GameController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ApplicationDbContext _context;
+        private readonly GameSaveService _gameSaveService;
 
-        public GameController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
+        public GameController(UserManager<IdentityUser> userManager, GameSaveService gameSaveService)
         {
             _userManager = userManager;
-            _context = context;
+            _gameSaveService = gameSaveService;
         }
 
         // Main game page that displays the list of saved games
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            var saves = _context.GameSaves
-                .Where(g => g.UserId == user.Id)
-                .OrderByDescending(g => g.SavedAt)
-                .ToList();
+            var saves = await _gameSaveService.GetUserSavesAsync(user.Id);
 
             ViewBag.Saves = saves;
             return View();
@@ -45,8 +43,7 @@ namespace SavannaWeb.Controllers
                 SaveData = saveData
             };
 
-            _context.GameSaves.Add(gameSave);
-            await _context.SaveChangesAsync();
+            await _gameSaveService.AddGameSaveAsync(gameSave);
 
             return RedirectToAction("Index");
         }
@@ -55,17 +52,14 @@ namespace SavannaWeb.Controllers
         public async Task<IActionResult> LoadGame(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var save = _context.GameSaves.FirstOrDefault(s => s.Id == id && s.UserId == user.Id);
+            var save = await _gameSaveService.GetUserSaveByIdAsync(id, user.Id);
 
             if (save == null)
                 return NotFound();
 
             ViewBag.LoadedGame = save.SaveData;
 
-            var saves = _context.GameSaves
-                .Where(g => g.UserId == user.Id)
-                .OrderByDescending(g => g.SavedAt)
-                .ToList();
+            var saves = await _gameSaveService.GetUserSavesAsync(user.Id);
             ViewBag.Saves = saves;
 
             return View("Index");

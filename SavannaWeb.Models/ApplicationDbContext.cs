@@ -1,5 +1,3 @@
-﻿// This file has been moved to SavannaWeb.Models project.
-
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SavannaWeb.Models;
