@@ -17,9 +17,6 @@ namespace SavannaWeb.Models
 
         public DateTime SavedAt { get; set; } = DateTime.UtcNow;
 
-        /// <summary>
-        /// Serializes the game state to JSON, including animal species, age, health, and offspring count.
-        /// </summary>
         public void SerializeSaveData(int iteration, int livingAnimals, (string species, int age, int health, int offspringCount)[] animals)
         {
             var saveData = new

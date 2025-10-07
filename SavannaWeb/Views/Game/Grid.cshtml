@@ -5,6 +5,9 @@
 }
 
 <h3>Savanna Grid</h3>
+<form method="post" asp-action="MoveAnimals">
+    <button type="submit" class="btn btn-primary mb-2">Move Animals</button>
+</form>
 <table class="table table-bordered text-center" style="width:auto;">
     @for (int y = 0; y < gridHeight; y++)
     {

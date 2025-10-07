@@ -14,6 +14,11 @@ namespace SavannaWeb.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly GameSaveService _gameSaveService;
+        private const int GridWidth = 10;
+        private const int GridHeight = 10;
+
+        // For demo: static animals list (replace with session or DB for multi-user)
+        private static List<Animal> _animals = SavannaGridHelper.GetInitialAnimals();
 
         public GameController(UserManager<IdentityUser> userManager, GameSaveService gameSaveService)
         {
@@ -65,16 +70,22 @@ namespace SavannaWeb.Controllers
             return View("Index");
         }
 
-        // Displays the game grid
+        // Show the grid
         public IActionResult Grid()
         {
-            var (gridWidth, gridHeight, animals) = SavannaWeb.Logic.SavannaGridHelper.GetGridData();
-
-            ViewBag.GridWidth = gridWidth;
-            ViewBag.GridHeight = gridHeight;
-            ViewBag.Animals = animals;
-
+            ViewBag.GridWidth = GridWidth;
+            ViewBag.GridHeight = GridHeight;
+            ViewBag.Animals = _animals;
             return View();
+        }
+
+        // Move animals and show the grid
+        [HttpPost]
+        public IActionResult MoveAnimals()
+        {
+            var movementService = new AnimalMovementService();
+            movementService.MoveAnimals(_animals, GridWidth, GridHeight);
+            return RedirectToAction("Grid");
         }
     }
 }

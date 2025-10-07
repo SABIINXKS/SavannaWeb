@@ -12,7 +12,6 @@ namespace SavannaWeb.Logic
         {
             foreach (var animal in animals)
             {
-                // Randomly move animal by -1, 0, or 1 in X and Y
                 int dx = _random.Next(-1, 2);
                 int dy = _random.Next(-1, 2);
 
