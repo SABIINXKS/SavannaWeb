@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SavannaWeb.Models;
+using System.Text.Json;
 
 namespace SavannaWeb.Logic
 {
@@ -18,6 +19,20 @@ namespace SavannaWeb.Logic
                 new Animal { Species = "Zebra", X = 5, Y = 7 },
                 new Animal { Species = "Elephant", X = 1, Y = 1 }
             };
+        }
+
+        public static (int gridWidth, int gridHeight, List<Animal> animals) GetGridData(string saveData)
+        {
+            // This assumes saveData is a JSON object with gridWidth, gridHeight, and animals properties
+            if (string.IsNullOrEmpty(saveData))
+                return (10, 10, new List<Animal>());
+
+            var doc = JsonDocument.Parse(saveData);
+            int gridWidth = doc.RootElement.GetProperty("gridWidth").GetInt32();
+            int gridHeight = doc.RootElement.GetProperty("gridHeight").GetInt32();
+            var animals = JsonSerializer.Deserialize<List<Animal>>(doc.RootElement.GetProperty("animals").GetRawText())
+                          ?? new List<Animal>();
+            return (gridWidth, gridHeight, animals);
         }
     }
 }

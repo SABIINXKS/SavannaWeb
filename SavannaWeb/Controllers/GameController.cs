@@ -78,6 +78,12 @@ namespace SavannaWeb.Controllers
 
             ViewBag.LoadedGame = save.SaveData;
 
+            (int gridWidth, int gridHeight, List<Animal> animals) = SavannaGridHelper.GetGridData(save.SaveData);
+
+            ViewBag.GridWidth = gridWidth;
+            ViewBag.GridHeight = gridHeight;
+            ViewBag.Animals = animals;
+
             var saves = await _gameSaveService.GetUserSavesAsync(user.Id);
             ViewBag.Saves = saves;
 
