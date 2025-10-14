@@ -20,13 +20,19 @@ namespace SavannaWeb.Controllers
         // For demo: static animals list (replace with session or DB for multi-user)
         private static List<Animal> _animals = SavannaGridHelper.GetInitialAnimals();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameController"/> class.
+        /// </summary>
         public GameController(UserManager<IdentityUser> userManager, GameSaveService gameSaveService)
         {
             _userManager = userManager;
             _gameSaveService = gameSaveService;
         }
 
-        // Main game page that displays the list of saved games
+        /// <summary>
+        /// Displays the main game page with the list of saved games for the current user.
+        /// </summary>
+        /// <returns>The Index view with the user's saved games.</returns>
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -36,7 +42,11 @@ namespace SavannaWeb.Controllers
             return View();
         }
 
-        // Saves a game (POST request)
+        /// <summary>
+        /// Saves the current game state for the user.
+        /// </summary>
+        /// <param name="saveData">The game state data to save (as JSON string).</param>
+        /// <returns>Redirects to the Index view after saving.</returns>
         [HttpPost]
         public async Task<IActionResult> SaveGame(string saveData)
         {
@@ -53,7 +63,11 @@ namespace SavannaWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        // Loads a game by ID (GET request)
+        /// <summary>
+        /// Loads a saved game by its ID for the current user.
+        /// </summary>
+        /// <param name="id">The ID of the saved game to load.</param>
+        /// <returns>The Index view with the loaded game data, or NotFound if not found.</returns>
         public async Task<IActionResult> LoadGame(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -70,7 +84,10 @@ namespace SavannaWeb.Controllers
             return View("Index");
         }
 
-        // Show the grid
+        /// <summary>
+        /// Displays the Savanna grid with the current positions of all animals.
+        /// </summary>
+        /// <returns>The Grid view with animal positions.</returns>
         public IActionResult Grid()
         {
             ViewBag.GridWidth = GridWidth;
@@ -79,7 +96,10 @@ namespace SavannaWeb.Controllers
             return View();
         }
 
-        // Move animals and show the grid
+        /// <summary>
+        /// Moves all animals to new positions on the grid and displays the updated grid.
+        /// </summary>
+        /// <returns>Redirects to the Grid view after moving animals.</returns>
         [HttpPost]
         public IActionResult MoveAnimals()
         {
