@@ -5,6 +5,8 @@ namespace SavannaWeb.Models
         public string Species { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        // Add other properties as needed (e.g., Age, Health, OffspringCount)
+        public int Age { get; set; }
+        public int Health { get; set; }
+        public int OffspringCount { get; set; }
     }
 }
