@@ -1,6 +1,135 @@
 ﻿@{
     ViewData["Title"] = "Game Page";
+    var saves = ViewBag.Saves as List<SavannaWeb.Models.GameSave>;
 }
 
-<h1>Game Page</h1>
-<p>Šī lapa pieejama tikai autorizētiem lietotājiem.</p>
+<h2>Welcome to the Game!</h2>
+
+<form method="post" asp-action="SaveGame" id="saveGameForm">
+    <textarea name="saveData" id="saveData" rows="5" cols="50" placeholder="Enter game data here (JSON or text)"></textarea><br />
+    <button type="submit">💾 Save Game</button>
+</form>
+
+@if (saves != null && saves.Any())
+{
+    <h3>Your Saved Games</h3>
+    <ul id="saveList">
+        @foreach (var save in saves)
+        {
+            <li data-save="@save.SaveData">
+                <strong>@save.SavedAt.ToString("g")</strong><br />
+                <span class="gameInfo">Loading game data...</span><br />
+                <form method="get" asp-action="LoadGame" asp-route-id="@save.Id" style="display:inline">
+                    <button type="submit">▶ Load</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No saved games yet.</p>
+}
+
+@if (ViewBag.LoadedGame != null)
+{
+    <h3>Loaded Game Data</h3>
+    <pre>@ViewBag.LoadedGame</pre>
+}
+
+<button id="toggleAnimalDisplay" class="btn btn-secondary mb-2" type="button">
+    Show Animal Names
+</button>
+
+<style>
+    .animal.selected {
+        background-color: #ffe082;
+        border-radius: 4px;
+        padding: 2px 6px;
+        transition: background 0.2s;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        let isSaved = true;
+        let showIcons = true;
+
+        const textarea = document.getElementById('saveData');
+        const form = document.getElementById('saveGameForm');
+        const toggleBtn = document.getElementById('toggleAnimalDisplay');
+
+        const animalIcons = {
+            "Lion": "🦁",
+            "Zebra": "🦓",
+            "Elephant": "🐘",
+            "Giraffe": "🦒",
+            "A": "🦁",
+            "Z": "🦓",
+            "E": "🐘",
+            "G": "🦒"
+        };
+
+        textarea.addEventListener('input', () => { isSaved = false; });
+        form.addEventListener('submit', () => { isSaved = true; });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (!isSaved) {
+                const confirmationMessage = 'You have unsaved progress. Are you sure you want to leave? Your changes will be lost.';
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
+
+        // Function to render animal info (icons or names) as clickable spans
+        function renderAnimalInfo() {
+            document.querySelectorAll('#saveList li').forEach(li => {
+                const rawData = li.dataset.save;
+                try {
+                    const decoded = JSON.parse(rawData);
+                    const iteration = decoded.iteration ?? 'N/A';
+                    const animals = decoded.livingAnimals ?? 'N/A';
+
+                    let animalList = decoded.animals ?? decoded.animalList ?? [];
+                    if (!Array.isArray(animalList)) animalList = [];
+
+                    let animalDisplay = animalList.map((a, idx) => {
+                        let species = typeof a === 'object' && a !== null ? (a.species ?? a.type ?? '') : a;
+                        let iconOrName = showIcons ? (animalIcons[species] || species) : (species);
+                        let stats = typeof a === 'object' ? JSON.stringify(a) : JSON.stringify({ species: a });
+                        return `<span class="animal" data-stats='${stats}' style="cursor:pointer;">${iconOrName}</span>`;
+                    }).join(' ');
+
+                    const info = `🌀 Iteration: ${iteration} | 🐾 Animals Alive: ${animals}` +
+                        (animalList.length ? `<br>Animals: ${animalDisplay}` : '');
+
+                    li.querySelector('.gameInfo').innerHTML = info;
+                } catch (e) {
+                    li.querySelector('.gameInfo').textContent = '⚠️ Invalid game data';
+                }
+            });
+
+            // Add click event to all animal spans
+            document.querySelectorAll('.animal').forEach(span => {
+                span.addEventListener('click', function () {
+                    // Remove highlight from all animals
+                    document.querySelectorAll('.animal.selected').forEach(s => s.classList.remove('selected'));
+                    // Highlight the clicked animal
+                    this.classList.add('selected');
+
+                    const stats = JSON.parse(this.dataset.stats);
+                    let statsText = Object.entries(stats).map(([k, v]) => `${k}: ${v}`).join('\n');
+                    alert("Animal statistics:\n" + statsText);
+                });
+            });
+        }
+
+        renderAnimalInfo();
+
+        toggleBtn.addEventListener('click', () => {
+            showIcons = !showIcons;
+            toggleBtn.textContent = showIcons ? 'Show Animal Names' : 'Show Animal Icons';
+            renderAnimalInfo();
+        });
+    </script>
+}

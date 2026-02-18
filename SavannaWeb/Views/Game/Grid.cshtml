@@ -1,0 +1,29 @@
+@{
+    int gridWidth = ViewBag.GridWidth;
+    int gridHeight = ViewBag.GridHeight;
+    var animals = ViewBag.Animals as List<SavannaWeb.Models.Animal>;
+}
+
+<h3>Savanna Grid</h3>
+<form method="post" asp-action="MoveAnimals">
+    <button type="submit" class="btn btn-primary mb-2">Move Animals</button>
+</form>
+<table class="table table-bordered text-center" style="width:auto;">
+    @for (int y = 0; y < gridHeight; y++)
+    {
+        <tr>
+        @for (int x = 0; x < gridWidth; x++)
+        {
+            var animal = animals.FirstOrDefault(a => a.X == x && a.Y == y);
+            <td style="width:32px;height:32px;">
+                @if (animal != null)
+                {
+                    <span title="@animal.Species">
+                        @animal.Species.Substring(0,1)
+                    </span>
+                }
+            </td>
+        }
+        </tr>
+    }
+</table>
